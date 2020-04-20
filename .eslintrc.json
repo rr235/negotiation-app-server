@@ -1,0 +1,10 @@
+{
+  "extends": ["plugin:prettier/recommended"],
+  "globals": {
+    "describe": false,
+    "it": false,
+    "expect": false,
+    "beforeAll": false,
+    "beforeEach": false
+  }
+}
