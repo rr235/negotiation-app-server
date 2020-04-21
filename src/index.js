@@ -10,6 +10,8 @@ const FileStore = require('session-file-store')(session);
 const app = express();
 const server = http.createServer(app);
 
+const data = {};
+
 const port = process.env.PORT || 5000;
 const corsOptions = {
   origin: [process.env.APPLICATION_URL],
@@ -48,4 +50,43 @@ app.get('/weather', (req, res) => {
   const { location } = req.body;
 
   getWeather(location, callback);
+});
+
+const checkExpectations = (sessionID) => {
+  const expectedSalary = data[sessionID].expectedSalary;
+  const offeredSalary = data[sessionID].offeredSalary;
+
+  if (expectedSalary === null || offeredSalary === null) {
+    return 'PENDING';
+  }
+
+  if (offeredSalary < expectedSalary) {
+    delete data[sessionID];
+    return 'FAILURE';
+  }
+
+  delete data[sessionID];
+  return 'SUCCESS';
+};
+
+app.post('/employee', ({ sessionID, body }, res) => {
+  if (!data[sessionID]) {
+    data[sessionID] = {
+      expectedSalary: null,
+      offeredSalary: null,
+    };
+  }
+  data[sessionID].expectedSalary = body.value;
+  res.send(checkExpectations(sessionID));
+});
+
+app.post('/employer', ({ sessionID, body }, res) => {
+  if (!data[sessionID]) {
+    data[sessionID] = {
+      expectedSalary: null,
+      offeredSalary: null,
+    };
+  }
+  data[sessionID].offeredSalary = body.value;
+  res.send(checkExpectations(sessionID));
 });
