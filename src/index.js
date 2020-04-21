@@ -60,7 +60,7 @@ const checkExpectations = (sessionID) => {
     return 'PENDING';
   }
 
-  if (offeredSalary < expectedSalary) {
+  if (Number(offeredSalary) < Number(expectedSalary)) {
     delete data[sessionID];
     return 'FAILURE';
   }
