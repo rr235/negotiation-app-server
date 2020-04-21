@@ -1,33 +1,15 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const http = require('http');
-const cors = require('cors');
 const getWeather = require('./services/weather');
-const { v4: uuid } = require('uuid');
-const session = require('express-session');
-const FileStore = require('session-file-store')(session);
+const applyMiddleswares = require('./middlewares');
+
+const data = {};
+const port = process.env.PORT || 5000;
 
 const app = express();
 const server = http.createServer(app);
 
-const data = {};
-
-const port = process.env.PORT || 5000;
-const corsOptions = {
-  origin: [process.env.APPLICATION_URL],
-  methods: 'GET, POST',
-};
-const sessionOptions = {
-  genid: () => uuid(),
-  store: new FileStore(),
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true,
-};
-
-app.use(bodyParser.json());
-app.use(cors(corsOptions));
-app.use(session(sessionOptions));
+applyMiddleswares(app);
 
 server.listen(port, () => {
   console.log(`Listening at ${port}`);
