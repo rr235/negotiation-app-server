@@ -45,9 +45,14 @@ app.get('/weather', (req, res) => {
       return;
     }
 
-    res.status(200).send(data);
+    const temperatureData = {
+      location: data.name,
+      temp: (data.main.temp - 273.15).toFixed(2), // converts to deg celsius
+    };
+
+    res.status(200).send(temperatureData);
   };
-  const { location } = req.body;
+  const { location } = req.query;
 
   getWeather(location, callback);
 });
